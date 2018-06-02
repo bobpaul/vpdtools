@@ -1,0 +1,37 @@
+#!/bin/bash
+#
+# Copyright (c) 2018 Raptor Engineering, LLC
+# Released under the terms of the AGPL v3
+
+set -e
+
+NEW_ULTRATURBO_MHZ="$1"
+INDIR="$2"
+INFILE="$3"
+OUTFILE="$4"
+SOURCE_BUCKET=2
+DEST_BUCKET=5
+
+P9_ALLOWED_BUCKET_NEST_MHZ=(0 1600 1866 2000 2133 2400 2666)
+
+NEW_NEST_FREQUENCY=${P9_ALLOWED_BUCKET_NEST_MHZ[$DEST_BUCKET]}
+
+rm -rf bucket_copy
+mkdir bucket_copy
+../reverseVpd.py -v ${INDIR}/${INFILE}.bin -o bucket_copy -r &> /dev/null
+
+cp ${INDIR}/${INFILE}.bin ${OUTFILE}.bin
+
+for i in `seq 0 5`; do
+	POUND_V=$(./extract_buckets_from_tvpd "#V" bucket_copy/${INFILE}-LRP${i}.tvpd)
+	if [[ "$POUND_V" != "" ]]; then
+		./update_poundv_buckets ${SOURCE_BUCKET} ${DEST_BUCKET} ${NEW_NEST_FREQUENCY} ${NEW_ULTRATURBO_MHZ} ${POUND_V}
+		./find_replace_binary_string ${OUTFILE}.bin search.bin replace.bin
+	fi
+done
+
+POUND_W=$(./extract_buckets_from_tvpd "#W" bucket_copy/${INFILE}-CRP0.tvpd)
+if [[ "$POUND_W" != "" ]]; then
+	./update_poundw_buckets ${SOURCE_BUCKET} ${DEST_BUCKET} ${POUND_W}
+	./find_replace_binary_string ${OUTFILE}.bin search.bin replace.bin
+fi
