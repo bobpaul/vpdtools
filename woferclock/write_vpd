@@ -5,7 +5,9 @@
 
 import sys
 import os
+import time
 import binascii
+import subprocess
 
 eeprom_bus = int(sys.argv[1])
 if sys.argv[2].startswith("0x") or sys.argv[2].startswith("0X"):
@@ -48,15 +50,17 @@ for i in range(0, vpd_length, 2):
         address_low = hex(address & 255)
         command = "i2cset -y " + str(eeprom_bus) + " 0x" + format(eeprom_address, '02x') + " " +  address_high + " " + address_low + " 0x" + raw_data[i:(i+2)] + " i"
         i2c_ret = os.system(command)
-        exit_code = os.WEXITSTATUS(i2c_ret)
-        if exit_code != 0:
-            # Retry
-            i2c_ret = os.system(command)
-            exit_code = os.WEXITSTATUS(i2c_ret)
-        if exit_code != 0:
-            print "[ERROR] Write failed!"
-            print "\tCommand was: " + command
-            sys.exit(1)
+        try:
+            subprocess.check_call(command, stderr=subprocess.STDOUT, shell=True)
+        except:
+            # Retry, giving the SEEPROM some time to recover
+            time.sleep(0.1)
+            try:
+                subprocess.check_call(command, shell=True)
+            except:
+                print "[ERROR] Write failed!"
+                print "\tCommand was: " + command
+                sys.exit(1)
     address = address + 1
     sys.stdout.write(format(address, '05d') + " / " + format((vpd_length / 2), '05d') + "\r")
     sys.stdout.flush()
