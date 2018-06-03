@@ -1,0 +1,15 @@
+WoFerClock requires the following external programs to run:
+
+realpath
+xmllint
+i2cget
+i2cget
+modprobe
+rmmod
+python
+
+To overclock:
+./woferclock_cpu
+
+Known issues:
+Depending on system version and/or kernel version, the VPD write step may spew write errors.  This is normal, and the VPD is successfully updated if no VPD mismatch error is printed at the end of the update process.
