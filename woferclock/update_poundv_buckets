@@ -82,8 +82,15 @@ print "=========================================="
 print "Header:\t\t" + header
 print "Version:\t" + str(int(version, 16))
 print ""
-for index in range (0, 6):
+for index in range (0, 5):
     if bucket[index][2:].startswith("0000"):
+        continue
+
+    if len(bucket[index][2:]) != 122:
+        if destination_bucket == (index + 1):
+            print "[ERROR] Source bucket invalid"
+            sys.exit(1)
+        print "Skipping invalid bucket " + str(index + 1)
         continue
 
     print "Bucket " + str(index + 1) + ":\t" + bucket[index]
