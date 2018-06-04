@@ -48,7 +48,7 @@ for i in range(0, vpd_length, 2):
     if original_data[i:(i+2)] != raw_data[i:(i+2)]:
         address_high = hex((address & 65280) >> 8)
         address_low = hex(address & 255)
-        command = "i2cset -y " + str(eeprom_bus) + " 0x" + format(eeprom_address, '02x') + " " +  address_high + " " + address_low + " 0x" + raw_data[i:(i+2)] + " i"
+        command = "i2cset -y " + str(eeprom_bus) + " 0x" + format(eeprom_address, '02x') + " " +  address_high + " " + address_low + " 0x" + raw_data[i:(i+2)] + " i 2>/dev/null"
         try:
             subprocess.check_call(command, stderr=subprocess.STDOUT, shell=True)
         except:
