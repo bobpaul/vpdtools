@@ -49,14 +49,13 @@ for i in range(0, vpd_length, 2):
         address_high = hex((address & 65280) >> 8)
         address_low = hex(address & 255)
         command = "i2cset -y " + str(eeprom_bus) + " 0x" + format(eeprom_address, '02x') + " " +  address_high + " " + address_low + " 0x" + raw_data[i:(i+2)] + " i"
-        i2c_ret = os.system(command)
         try:
             subprocess.check_call(command, stderr=subprocess.STDOUT, shell=True)
         except:
             # Retry, giving the SEEPROM some time to recover
             time.sleep(0.1)
             try:
-                subprocess.check_call(command, shell=True)
+                subprocess.check_call(command, stderr=subprocess.STDOUT, shell=True)
             except:
                 print "[ERROR] Write failed!"
                 print "\tCommand was: " + command
