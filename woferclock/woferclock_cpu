@@ -9,8 +9,6 @@
 
 set -e
 
-NEW_ULTRATURBO_MHZ=4200
-
 echo "======================================================================"
 echo "Welcome to WoFerClock!"
 echo ""
@@ -55,7 +53,30 @@ fi
 rm -rf vpd_out
 
 echo "======================================================================"
+read -r -p "Core count of installed CPU(s): " CORE_COUNT
+if [[ "$INPUT" == "" ]]; then
+	CORE_COUNT=24
+fi
+
+# Defaults
+NEW_ULTRATURBO_MHZ=4200
+VOLTAGE_MULTIPLIER=1.00
+
+# Reasonable defaults
+# Partly validated on initial silicon
+# NOT GUARANTEED, starting point ONLY!
+if [[ "$CORE_COUNT" == "18" ]]; then
+	NEW_ULTRATURBO_MHZ=4200
+	VOLTAGE_MULTIPLIER=1.00
+fi
+if [[ "$CORE_COUNT" == "22" ]]; then
+	NEW_ULTRATURBO_MHZ=4200
+	VOLTAGE_MULTIPLIER=1.05
+fi
+
+echo "======================================================================"
 echo "Targetting bucket 5 with a new Ultra Turbo frequency of ${NEW_ULTRATURBO_MHZ}MHz"
+echo "Voltage multiplier: ${VOLTAGE_MULTIPLIER}"
 echo "======================================================================"
 ./list_i2c_busses
 
@@ -77,7 +98,7 @@ if [[ "$I2C_BUS_0" != "" ]]; then
 
 	mkdir -p vpd_out
 	echo "Modifying VPD"
-	./copy_buckets ${NEW_ULTRATURBO_MHZ} `realpath vpd_backup` cpu0 vpd_out/cpu0
+	./copy_buckets ${NEW_ULTRATURBO_MHZ} ${VOLTAGE_MULTIPLIER} `realpath vpd_backup` cpu0 vpd_out/cpu0
 	echo "Done!"
 fi
 
@@ -102,7 +123,7 @@ if [[ "$I2C_BUS_1" != "" ]]; then
 
 	mkdir -p vpd_out
 	echo "Modifying VPD"
-	./copy_buckets ${NEW_ULTRATURBO_MHZ} `realpath vpd_backup` cpu1 vpd_out/cpu1
+	./copy_buckets ${NEW_ULTRATURBO_MHZ} ${VOLTAGE_MULTIPLIER} `realpath vpd_backup` cpu1 vpd_out/cpu1
 	echo "Done!"
 fi
 

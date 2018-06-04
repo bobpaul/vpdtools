@@ -6,9 +6,10 @@
 set -e
 
 NEW_ULTRATURBO_MHZ="$1"
-INDIR="$2"
-INFILE="$3"
-OUTFILE="$4"
+VOLTAGE_RATIO="$2"
+INDIR="$3"
+INFILE="$4"
+OUTFILE="$5"
 SOURCE_BUCKET=2
 DEST_BUCKET=5
 
@@ -25,7 +26,7 @@ cp ${INDIR}/${INFILE}.bin ${OUTFILE}.bin
 for i in `seq 0 5`; do
 	POUND_V=$(./extract_buckets_from_tvpd "#V" bucket_copy/${INFILE}-LRP${i}.tvpd)
 	if [[ "$POUND_V" != "" ]]; then
-		./update_poundv_buckets ${SOURCE_BUCKET} ${DEST_BUCKET} ${NEW_NEST_FREQUENCY} ${NEW_ULTRATURBO_MHZ} ${POUND_V}
+		./update_poundv_buckets ${SOURCE_BUCKET} ${DEST_BUCKET} ${NEW_NEST_FREQUENCY} ${NEW_ULTRATURBO_MHZ} ${VOLTAGE_RATIO} ${POUND_V}
 		./find_replace_binary_string ${OUTFILE}.bin search.bin replace.bin
 	fi
 done
