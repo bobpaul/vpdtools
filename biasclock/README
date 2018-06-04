@@ -1,0 +1,12 @@
+BiasClock requires the following external programs to run:
+
+pflash (from skiboot)
+attributeOverride (from hostboot)
+
+To adjust clocks:
+./biasclock
+
+NOTE
+If the overclock is unstable, your system may not complete IPL.  On the BMC, the following command will clear the bias and restore original clocks on the next IPL cycle:
+pflash -P ATTR_TMP -c
+

@@ -1,0 +1,91 @@
+#!/bin/bash
+#
+# Copyright (c) 2018 Raptor Engineering, LLC
+# Released under the terms of the AGPL v3
+#
+# Provided WITHOUT WARRANTY OF ANY KIND, to the
+# maximum extent possible under law.  Modify at
+# your sole risk!
+
+set -e
+
+echo "======================================================================"
+echo "Welcome to BiasClock!"
+echo ""
+echo "This program is free software, developed by Raptor Engineering, LLC"
+echo "for use with the Talos II line of POWER9 machines:"
+echo ""
+echo "https://www.raptorcs.com/TALOSII"
+echo ""
+echo "======================================================================"
+echo "Raptor Engineering, LLC, Raptor Computing Systems, LLC, IBM, and"
+echo "affiliated entities disclaim all liability resulting from the use"
+echo "or misuse of this program.  You accept all risk associated with"
+echo "modification of clock and/or power data, including, without"
+echo "restriction, hardware damage, data corruption, and/or loss of"
+echo "business resulting from the use of this program."
+echo ""
+echo "CPU and/or mainboard damage incurred as a result of attempted"
+echo "overclocking may void any and all warranty(s) for the damaged"
+echo "component(s)."
+echo ""
+echo "======================================================================"
+echo "Do you accept these terms and wish to proceed at your own risk? [y/N]"
+echo "======================================================================"
+
+read -r -p "" INPUT
+if [[ "$INPUT" != "Y" && "$INPUT" != "y" ]]; then
+	echo "Exiting..."
+	exit 1
+fi
+
+# Clean up possibly stale output files if present
+rm -rf vpd_out
+
+echo "======================================================================"
+read -r -p "Core count of installed CPU(s): " CORE_COUNT
+if [[ "$INPUT" == "" ]]; then
+	CORE_COUNT=24
+fi
+
+# Defaults
+OVERCLOCK_PERCENT=10
+OVERVOLT_PERCENT=0
+
+# Reasonable defaults
+# Partly validated on initial silicon
+# NOT GUARANTEED, starting point ONLY!
+if [[ $CORE_COUNT == 18 ]]; then
+        OVERCLOCK_PERCENT=5
+        OVERVOLT_PERCENT=0
+fi
+if [[ $CORE_COUNT == 22 ]]; then
+        OVERCLOCK_PERCENT=15
+        OVERVOLT_PERCENT=5
+fi
+
+./create_override_file ${OVERCLOCK_PERCENT} ${OVERVOLT_PERCENT} &> /dev/null
+attributeOverride overclock_data.txt &> /dev/null
+
+echo "======================================================================"
+echo "Ready to write bias attributes.  Continue? [y/N]"
+echo "======================================================================"
+
+read -r -p "" INPUT
+if [[ "$INPUT" != "Y" && "$INPUT" != "y" ]]; then
+	echo "Exiting..."
+	exit 1
+fi
+
+pflash -e -f -p attrOverride.bin -P ATTR_TMP
+
+echo "======================================================================"
+echo "Bias attributes have been successfully programmed!"
+echo ""
+echo "NOTE: It is strongly recommended that you disable WoF Phase 2 support"
+echo "in your PNOR when using BiasClock.  Ultra Turbo frequencies are scaled"
+echo "by BiasClock and your CPU may not be able to overclock beyond a mild"
+echo "percentage offset with WoF Phase 2 active."
+echo ""
+echo "Thank you for using BiasClock!"
+echo "======================================================================"
