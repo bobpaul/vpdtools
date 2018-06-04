@@ -10,3 +10,7 @@ python
 
 To overclock:
 ./woferclock_cpu
+
+NOTE:
+After new MVPD is written, the MVPD cache needs to be cleared.  On the BMC, the following command will clear the MVPD and force a reload from module VPD on the next IPL cycle:
+pflash -P MVPD -c
