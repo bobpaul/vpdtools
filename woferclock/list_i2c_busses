@@ -10,6 +10,12 @@ import glob
 i2cdir = "/sys/class/i2c-dev/"
 eeprom_address = 0x50
 
+mod_ret = os.system("modprobe i2c_dev")
+exit_code = os.WEXITSTATUS(mod_ret)
+if exit_code != 0:
+    print "[ERROR] I2C driver load failed!"
+    sys.exit(1)
+
 i2cbusses = glob.glob(i2cdir + "i2c-*")
 busnumlist = []
 for b in i2cbusses:
@@ -17,12 +23,6 @@ for b in i2cbusses:
     busnumlist.append(int(bus))
 
 busnumlist.sort()
-
-mod_ret = os.system("modprobe i2c_dev")
-exit_code = os.WEXITSTATUS(mod_ret)
-if exit_code != 0:
-    print "[ERROR] I2C driver load failed!"
-    sys.exit(1)
 
 mod_ret = os.system("modprobe at24")
 exit_code = os.WEXITSTATUS(mod_ret)
