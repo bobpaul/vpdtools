@@ -53,6 +53,7 @@ new_powerbus_mhz = int(sys.argv[3])
 new_ultraturbo_mhz = int(sys.argv[4])
 voltage_multiplier = float(sys.argv[5])
 raw_data = sys.argv[6]
+max_voltage = 1098
 
 if (source_bucket < 0) or (source_bucket > 5):
     print "[ERROR] Invalid source bucket specified"
@@ -121,11 +122,26 @@ turbo[0] = format(int(int(turbo[0], 16) * ultraturbo_ratio), '04x')
 nominal[0] = format(int(int(nominal[0], 16) * ultraturbo_ratio), '04x')
 powersave[0] = format(int(int(powersave[0], 16) * ultraturbo_ratio), '04x')
 powerbus[0] = format(new_powerbus_mhz, '04x')
-ultraturbo[1] = format(int(voltage_multiplier * int(ultraturbo[1], 16)), '04x')
-turbo[1] = format(int(voltage_multiplier * int(turbo[1], 16)), '04x')
-nominal[1] = format(int(voltage_multiplier * int(nominal[1], 16)), '04x')
-powersave[1] = format(int(voltage_multiplier * int(powersave[1], 16)), '04x')
-powerbus[1] = format(int(voltage_multiplier * int(powerbus[1], 16)), '04x')
+new_voltage = voltage_multiplier * int(ultraturbo[1], 16)
+if (new_voltage > max_voltage):
+    new_voltage = max_voltage
+ultraturbo[1] = format(int(new_voltage), '04x')
+new_voltage = voltage_multiplier * int(turbo[1], 16)
+if (new_voltage > max_voltage):
+    new_voltage = max_voltage
+turbo[1] = format(int(new_voltage), '04x')
+new_voltage = voltage_multiplier * int(nominal[1], 16)
+if (new_voltage > max_voltage):
+    new_voltage = max_voltage
+nominal[1] = format(int(new_voltage), '04x')
+new_voltage = voltage_multiplier * int(powersave[1], 16)
+if (new_voltage > max_voltage):
+    new_voltage = max_voltage
+powersave[1] = format(int(new_voltage), '04x')
+new_voltage = voltage_multiplier * int(powerbus[1], 16)
+if (new_voltage > max_voltage):
+    new_voltage = max_voltage
+powerbus[1] = format(int(new_voltage), '04x')
 ultraturbo[2] = format(int(voltage_multiplier * int(ultraturbo[2], 16)), '04x')
 turbo[2] = format(int(voltage_multiplier * int(turbo[2], 16)), '04x')
 nominal[2] = format(int(voltage_multiplier * int(nominal[2], 16)), '04x')
