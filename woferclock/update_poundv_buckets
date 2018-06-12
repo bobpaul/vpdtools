@@ -53,7 +53,13 @@ new_powerbus_mhz = int(sys.argv[3])
 new_ultraturbo_mhz = int(sys.argv[4])
 voltage_multiplier = float(sys.argv[5])
 raw_data = sys.argv[6]
-max_voltage = 1098
+
+# Rated limit plus safety margin
+#max_voltage = 1098
+
+# Absolute maximum process limit
+# Hardware damage WILL occur above this value!
+max_voltage = 1150
 
 if (source_bucket < 0) or (source_bucket > 5):
     print "[ERROR] Invalid source bucket specified"
