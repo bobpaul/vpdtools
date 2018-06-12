@@ -65,6 +65,10 @@ VOLTAGE_MULTIPLIER=1.00
 # Reasonable defaults
 # Partly validated on initial silicon
 # NOT GUARANTEED, starting point ONLY!
+if [[ "$CORE_COUNT" == "4" ]]; then
+	NEW_ULTRATURBO_MHZ=4200
+	VOLTAGE_MULTIPLIER=1.142
+fi
 if [[ "$CORE_COUNT" == "8" ]]; then
 	NEW_ULTRATURBO_MHZ=4400
 	VOLTAGE_MULTIPLIER=1.142
