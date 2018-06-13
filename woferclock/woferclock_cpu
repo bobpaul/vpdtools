@@ -75,7 +75,7 @@ if [[ "$CORE_COUNT" == "8" ]]; then
 fi
 if [[ "$CORE_COUNT" == "18" ]]; then
 	NEW_ULTRATURBO_MHZ=4200
-	VOLTAGE_MULTIPLIER=1.05
+	VOLTAGE_MULTIPLIER=1.1
 fi
 if [[ "$CORE_COUNT" == "22" ]]; then
 	NEW_ULTRATURBO_MHZ=4200
