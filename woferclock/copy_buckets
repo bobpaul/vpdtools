@@ -24,15 +24,15 @@ mkdir bucket_copy
 cp ${INDIR}/${INFILE}.bin ${OUTFILE}.bin
 
 for i in `seq 0 5`; do
-	POUND_V=$(./extract_buckets_from_tvpd "#V" bucket_copy/${INFILE}-LRP${i}.tvpd)
+	POUND_V=$(./extract_buckets_from_tvpd.py "#V" bucket_copy/${INFILE}-LRP${i}.tvpd)
 	if [[ "$POUND_V" != "" ]]; then
-		./update_poundv_buckets ${SOURCE_BUCKET} ${DEST_BUCKET} ${NEW_NEST_FREQUENCY} ${NEW_ULTRATURBO_MHZ} ${VOLTAGE_RATIO} ${POUND_V}
-		./find_replace_binary_string ${OUTFILE}.bin search.bin replace.bin
+		./update_poundv_buckets.py ${SOURCE_BUCKET} ${DEST_BUCKET} ${NEW_NEST_FREQUENCY} ${NEW_ULTRATURBO_MHZ} ${VOLTAGE_RATIO} ${POUND_V}
+		./find_replace_binary_string.py ${OUTFILE}.bin search.bin replace.bin
 	fi
 done
 
-POUND_W=$(./extract_buckets_from_tvpd "#W" bucket_copy/${INFILE}-CRP0.tvpd)
+POUND_W=$(./extract_buckets_from_tvpd.py "#W" bucket_copy/${INFILE}-CRP0.tvpd)
 if [[ "$POUND_W" != "" ]]; then
-	./update_poundw_buckets ${SOURCE_BUCKET} ${DEST_BUCKET} ${POUND_W}
-	./find_replace_binary_string ${OUTFILE}.bin search.bin replace.bin
+	./update_poundw_buckets.py ${SOURCE_BUCKET} ${DEST_BUCKET} ${POUND_W}
+	./find_replace_binary_string.py ${OUTFILE}.bin search.bin replace.bin
 fi

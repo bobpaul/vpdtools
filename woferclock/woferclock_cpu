@@ -86,7 +86,7 @@ echo "======================================================================"
 echo "Targetting bucket 5 with a new Ultra Turbo frequency of ${NEW_ULTRATURBO_MHZ}MHz"
 echo "Voltage multiplier: ${VOLTAGE_MULTIPLIER}"
 echo "======================================================================"
-./list_i2c_busses
+./list_i2c_busses.py
 
 echo "======================================================================"
 read -r -p "MVPD I2C bus of your first CPU (typically 0, <ENTER> to skip): " I2C_BUS_0
@@ -95,7 +95,7 @@ if [[ "$I2C_BUS_0" != "" ]]; then
 	mkdir -p vpd_backup
 	echo -n "Reading VPD..."
 	set +e
-	./read_vpd "${I2C_BUS_0}" 0x50 vpd_backup/cpu0.bin
+	./read_vpd.py "${I2C_BUS_0}" 0x50 vpd_backup/cpu0.bin
 	RETCODE=$?
 	set -e
 	if [[ $RETCODE != 0 ]]; then
@@ -111,7 +111,7 @@ if [[ "$I2C_BUS_0" != "" ]]; then
 fi
 
 echo "======================================================================"
-./list_i2c_busses
+./list_i2c_busses.py
 
 echo "======================================================================"
 read -r -p "MVPD I2C bus of your second CPU (<ENTER> to skip): " I2C_BUS_1
@@ -120,7 +120,7 @@ if [[ "$I2C_BUS_1" != "" ]]; then
 	mkdir -p vpd_backup
 	echo -n "Reading VPD..."
 	set +e
-	./read_vpd "${I2C_BUS_1}" 0x50 vpd_backup/cpu1.bin
+	./read_vpd.py "${I2C_BUS_1}" 0x50 vpd_backup/cpu1.bin
 	RETCODE=$?
 	set -e
 	if [[ $RETCODE != 0 ]]; then
@@ -147,12 +147,12 @@ fi
 
 if [[ "$I2C_BUS_0" != "" ]]; then
 	echo "Writing CPU 0 VPD..."
-	./write_vpd "${I2C_BUS_0}" 0x50 vpd_out/cpu0.bin
+	./write_vpd.py "${I2C_BUS_0}" 0x50 vpd_out/cpu0.bin
 fi
 
 if [[ "$I2C_BUS_1" != "" ]]; then
 	echo "Writing CPU 1 VPD"
-	./write_vpd "${I2C_BUS_1}" 0x50 vpd_out/cpu1.bin
+	./write_vpd.py "${I2C_BUS_1}" 0x50 vpd_out/cpu1.bin
 fi
 
 echo "======================================================================"
