@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python2
 # Created 03/20/15 by Jason Albert
 # Program to deconstruct a VPD image into xml template files
 
