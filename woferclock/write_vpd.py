@@ -1,4 +1,4 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python3
 #
 # Copyright (c) 2018 Raptor Engineering, LLC
 # Released under the terms of the AGPL v3
@@ -23,13 +23,13 @@ raw_data = binascii.hexlify(indata)
 vpd_length = len(raw_data)
 
 if vpd_length != 131072:
-    print "[ERROR] Invalid VPD length.  Aborting!"
+    print("[ERROR] Invalid VPD length.  Aborting!")
     sys.exit(1)
 
 mod_ret = os.system("modprobe at24")
 exit_code = os.WEXITSTATUS(mod_ret)
 if exit_code != 0:
-    print "[ERROR] at24 driver load failed!"
+    print("[ERROR] at24 driver load failed!")
     sys.exit(1)
 
 with open("/sys/class/i2c-dev/i2c-" + str(eeprom_bus) + "/device/" + str(eeprom_bus) + "-" + format(eeprom_address, '04x') + "/eeprom", 'rb') as f:
@@ -40,7 +40,7 @@ original_data = binascii.hexlify(origdata)
 mod_ret = os.system("rmmod at24")
 exit_code = os.WEXITSTATUS(mod_ret)
 if exit_code != 0:
-    print "[ERROR] at24 driver unload failed!"
+    print("[ERROR] at24 driver unload failed!")
     sys.exit(1)
 
 address = 0
@@ -57,19 +57,19 @@ for i in range(0, vpd_length, 2):
             try:
                 subprocess.check_call(command, stderr=subprocess.STDOUT, shell=True)
             except:
-                print "[ERROR] Write failed!"
-                print "\tCommand was: " + command
+                print("[ERROR] Write failed!")
+                print("\tCommand was: " + command)
                 sys.exit(1)
     address = address + 1
     sys.stdout.write(format(address, '05d') + " / " + format((vpd_length / 2), '05d') + "\r")
     sys.stdout.flush()
 
-print ""
+print("")
 
 mod_ret = os.system("modprobe at24")
 exit_code = os.WEXITSTATUS(mod_ret)
 if exit_code != 0:
-    print "[ERROR] at24 driver load failed!"
+    print("[ERROR] at24 driver load failed!")
     sys.exit(1)
 
 with open("/sys/class/i2c-dev/i2c-" + str(eeprom_bus) + "/device/" + str(eeprom_bus) + "-" + format(eeprom_address, '04x') + "/eeprom", 'rb') as f:
@@ -77,7 +77,7 @@ with open("/sys/class/i2c-dev/i2c-" + str(eeprom_bus) + "/device/" + str(eeprom_
 
 readback_data = binascii.hexlify(readdata)
 if (readback_data != raw_data):
-    print "[WARNING] Readback did NOT match provided file!  VPD in unknown state!"
+    print("[WARNING] Readback did NOT match provided file!  VPD in unknown state!")
     sys.exit(2)
 else:
-    print "Done!"
+    print("Done!")

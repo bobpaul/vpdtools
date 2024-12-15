@@ -1,4 +1,4 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python3
 #
 # Copyright (c) 2018 Raptor Engineering, LLC
 # Released under the terms of the AGPL v3
@@ -11,4 +11,4 @@ for r in recordlist:
     if r.attributes['name'].value == sys.argv[1]:
         datalist = r.getElementsByTagName('kwdata')
         for d in datalist:
-            print d.childNodes[0].nodeValue
+            print(d.childNodes[0].nodeValue)

@@ -1,4 +1,4 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python3
 # Created 03/20/15 by Jason Albert
 # Program to deconstruct a VPD image into xml template files
 
@@ -195,9 +195,8 @@ if (clCreateRecords):
     toplevelvpd = vpd
 
 # Loop thru our records and create our record/keyword entries
-for recordItem in (sorted(recordNames.values(), key=operator.attrgetter('recordOffset'))):
+for recordName, recordItem in sorted(list(recordNames.items()), key=lambda item: item[1].recordOffset):
     out.setIndent(2)
-    recordName = recordItem.recordName
 
     # The little indirection needed when creating individual record files
     if (clCreateRecords):

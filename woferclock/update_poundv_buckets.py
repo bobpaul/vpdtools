@@ -1,4 +1,4 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python3
 #
 # Copyright (c) 2018 Raptor Engineering, LLC
 # Released under the terms of the AGPL v3
@@ -11,27 +11,27 @@ import sys
 import binascii
 
 def show_poundv_bucket_mode_data(mode_data, friendly_name):
-    print "\t" + friendly_name + ":"
-    print "\t\tFrequency:\t" + mode_data[0] + " (" + str(int(mode_data[0], 16)) + " MHz)"
-    print "\t\tVDD Nominal:\t" + mode_data[1] + " (" + str(int(mode_data[1], 16)) + " mV)"
-    print "\t\tIDD Nominal:\t" + mode_data[2] + " (" + str(int(mode_data[2], 16)) + " mA)"
-    print "\t\tVCS Nominal:\t" + mode_data[3] + " (" + str(int(mode_data[3], 16)) + " mV)"
-    print "\t\tICS Nominal:\t" + mode_data[4] + " (" + str(int(mode_data[4], 16)) + " mA)"
+    print("\t" + friendly_name + ":")
+    print("\t\tFrequency:\t" + mode_data[0] + " (" + str(int(mode_data[0], 16)) + " MHz)")
+    print("\t\tVDD Nominal:\t" + mode_data[1] + " (" + str(int(mode_data[1], 16)) + " mV)")
+    print("\t\tIDD Nominal:\t" + mode_data[2] + " (" + str(int(mode_data[2], 16)) + " mA)")
+    print("\t\tVCS Nominal:\t" + mode_data[3] + " (" + str(int(mode_data[3], 16)) + " mV)")
+    print("\t\tICS Nominal:\t" + mode_data[4] + " (" + str(int(mode_data[4], 16)) + " mA)")
 
 def show_poundv_bucket_power_data(power_data, friendly_name):
-    print "\t" + friendly_name + ":"
-    print "\t\tPower 1:\t" + power_data[0] + " (" + str(int(power_data[0], 16)) + " W)"
-    print "\t\tPower 2:\t" + power_data[1] + " (" + str(int(power_data[0], 16)) + " W)"
+    print("\t" + friendly_name + ":")
+    print("\t\tPower 1:\t" + power_data[0] + " (" + str(int(power_data[0], 16)) + " W)")
+    print("\t\tPower 2:\t" + power_data[1] + " (" + str(int(power_data[0], 16)) + " W)")
 
 def parse_poundv_bucket(bucket_data):
-    modes = map(''.join, zip(*[iter(bucket_data[2:])]*20))
+    modes = list(map(''.join, list(zip(*[iter(bucket_data[2:])]*20))))
     id = bucket_data[:2]
-    nominal = map(''.join, zip(*[iter(modes[0])]*4))
-    powersave = map(''.join, zip(*[iter(modes[1])]*4))
-    turbo = map(''.join, zip(*[iter(modes[2])]*4))
-    ultraturbo = map(''.join, zip(*[iter(modes[3])]*4))
-    powerbus = map(''.join, zip(*[iter(modes[4])]*4))
-    sortpower = map(''.join, zip(*[iter(modes[5])]*4))
+    nominal = list(map(''.join, list(zip(*[iter(modes[0])]*4))))
+    powersave = list(map(''.join, list(zip(*[iter(modes[1])]*4))))
+    turbo = list(map(''.join, list(zip(*[iter(modes[2])]*4))))
+    ultraturbo = list(map(''.join, list(zip(*[iter(modes[3])]*4))))
+    powerbus = list(map(''.join, list(zip(*[iter(modes[4])]*4))))
+    sortpower = list(map(''.join, list(zip(*[iter(modes[5])]*4))))
 
     return id, nominal, powersave, turbo, ultraturbo, powerbus, sortpower
 
@@ -62,15 +62,15 @@ raw_data = sys.argv[6]
 max_voltage = 1150
 
 if (source_bucket < 0) or (source_bucket > 5):
-    print "[ERROR] Invalid source bucket specified"
+    print("[ERROR] Invalid source bucket specified")
     sys.exit(1)
 
 if (destination_bucket < 0) or (destination_bucket > 5):
-    print "[ERROR] Invalid destination bucket specified"
+    print("[ERROR] Invalid destination bucket specified")
     sys.exit(1)
 
 if source_bucket == destination_bucket:
-    print "[ERROR] Cannot copy to same destination bucket as origin bucket"
+    print("[ERROR] Cannot copy to same destination bucket as origin bucket")
     sys.exit(1)
 
 # #V buckets start at offset 4, and run for 61 bytes each
@@ -85,23 +85,23 @@ bucket[3] = raw_data[374:496]
 bucket[4] = raw_data[496:618]
 bucket[5] = raw_data[618:740]
 
-print "#V data block update"
-print "=========================================="
-print "Header:\t\t" + header
-print "Version:\t" + str(int(version, 16))
-print ""
+print("#V data block update")
+print("==========================================")
+print("Header:\t\t" + header)
+print("Version:\t" + str(int(version, 16)))
+print("")
 for index in range (0, 5):
     if bucket[index][2:].startswith("0000"):
         continue
 
     if len(bucket[index][2:]) != 120:
         if destination_bucket == (index + 1):
-            print "[ERROR] Source bucket invalid"
+            print("[ERROR] Source bucket invalid")
             sys.exit(1)
-        print "Skipping invalid bucket " + str(index + 1)
+        print("Skipping invalid bucket " + str(index + 1))
         continue
 
-    print "Bucket " + str(index + 1) + ":\t" + bucket[index]
+    print("Bucket " + str(index + 1) + ":\t" + bucket[index])
 
     id, nominal, powersave, turbo, ultraturbo, powerbus, sortpower = parse_poundv_bucket(bucket[index])
 
@@ -112,17 +112,17 @@ for index in range (0, 5):
     show_poundv_bucket_mode_data(powerbus, "PowerBus")
     show_poundv_bucket_power_data(sortpower, "Sort Power")
 
-    print ""
+    print("")
 
-print "Copying and adjusting data from bucket " + str(source_bucket + 1) + " to bucket " + str(destination_bucket + 1)
+print("Copying and adjusting data from bucket " + str(source_bucket + 1) + " to bucket " + str(destination_bucket + 1))
 if bucket[source_bucket][2:].startswith("0000"):
-    print "[ERROR] Source bucket data not valid"
+    print("[ERROR] Source bucket data not valid")
     sys.exit(1)
 
 id, nominal, powersave, turbo, ultraturbo, powerbus, sortpower = parse_poundv_bucket(bucket[source_bucket])
 new_id = format(destination_bucket + 1, '02x')
 ultraturbo_ratio = float(new_ultraturbo_mhz) / int(ultraturbo[0], 16)
-print "\tUltraturbo ratio:\t" + str(ultraturbo_ratio)
+print("\tUltraturbo ratio:\t" + str(ultraturbo_ratio))
 ultraturbo[0] = format(int(new_ultraturbo_mhz), '04x')
 turbo[0] = format(int(int(turbo[0], 16) * ultraturbo_ratio), '04x')
 nominal[0] = format(int(int(nominal[0], 16) * ultraturbo_ratio), '04x')
@@ -155,7 +155,7 @@ powersave[2] = format(int(voltage_multiplier * int(powersave[2], 16)), '04x')
 powerbus[2] = format(int(voltage_multiplier * int(powerbus[2], 16)), '04x')
 bucket[destination_bucket] = assemble_poundv_bucket(new_id, nominal, powersave, turbo, ultraturbo, powerbus, sortpower)
 
-print "\tModified bucket:\t" + bucket[destination_bucket]
+print("\tModified bucket:\t" + bucket[destination_bucket])
 show_poundv_bucket_mode_data(powersave, "Powersave")
 show_poundv_bucket_mode_data(nominal, "Nominal")
 show_poundv_bucket_mode_data(turbo, "Turbo")
@@ -173,4 +173,4 @@ with open("search.bin", 'wb') as f:
 with open("replace.bin", 'wb') as f:
     f.write(replace_binstring)
 
-print ""
+print("")
