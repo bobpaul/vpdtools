@@ -5,6 +5,9 @@ Tools to create VPD for OpenPOWER systems
 Source:
 https://github.com/open-power/vpdtools
 
+RaptorRCS:
+https://git.raptorcs.com/git/vpdtools
+
 VPD Format Spec:
 https://www-355.ibm.com/systems/power/openpower/posting.xhtml?postingId=1D060729AC96891885257E1B0053BC95
 
@@ -27,7 +30,7 @@ Note: Since data format (ascii vs hex) is not stored in VPD, the tool simply
 
 Dependencies
 ============
-Python 2.7 is required.
+Python 2.7+ is required.
 NOTE: RHEL6 is python 2.6 and this tool will not run there
 
 xmllint, if installed, is used to cleanup the formatting of the output xml
