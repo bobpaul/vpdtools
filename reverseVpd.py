@@ -260,24 +260,20 @@ for recordName, recordItem in sorted(list(recordNames.items()), key=lambda item:
         # Walk backwords and bail the first time a nonzero value is found
         nzeroidx = len(keywordData) - 1
         while (nzeroidx >= 0):
-            if (keywordData[nzeroidx] != 0x00):
+            if (keywordData[nzeroidx] != b'\x00'):
                 break;
             nzeroidx-=1
 
-        # If we didn't get back to the start, shorten the data
-        if (nzeroidx >= 0):
-            keywordData = keywordData[0:(nzeroidx+1)]
-        # Made it all the way to the start, must be all zero.  Shorten it to just the first zero byte to put into the template
-        else:
-            keywordData = keywordData[0:1]
+        nzeroidx = 0 if nzeroidx < 1 else nzeroidx
+        keywordDataTrunc = keywordData[0:(nzeroidx+1)]
 
         # Now try to decode and figure out hex vs ascii
         try:
-            keywordData.decode('ascii')
+            keywordDataTrunc.decode('ascii')
         except UnicodeDecodeError:
             asciiState = False
         else:
-            if asciiAllowed(keywordData.decode('ascii')):
+            if asciiAllowed(keywordDataTrunc.decode('ascii')):
                 asciiState = True
             else:
                 asciiState = False
@@ -285,7 +281,7 @@ for recordName, recordItem in sorted(list(recordNames.items()), key=lambda item:
         # We know if its ascii or not, store away our data
         if (asciiState):
             ET.SubElement(keyword, "kwformat").text = "ascii"
-            ET.SubElement(keyword, "kwdata").text = keywordData.decode()
+            ET.SubElement(keyword, "kwdata").text = keywordDataTrunc.decode()
         else:
             ET.SubElement(keyword, "kwformat").text = "hex"
             ET.SubElement(keyword, "kwdata").text = binascii.hexlify(keywordData).decode()
